@@ -28,8 +28,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:3.13-slim-bookworm
 
 WORKDIR /app
- 
-COPY --from=uv /root/.local /root/.local
+
 COPY --from=uv /app/.venv /app/.venv
 
 # Place executables in the environment at the front of the path
@@ -45,4 +44,4 @@ EXPOSE 8000
 
 # Set the entry point for the container
 # Use shell form to allow environment variable expansion
-CMD mcp-reddit --transport ${TRANSPORT} --host ${HOST} --port ${PORT}
+CMD ["sh", "-c", "mcp-reddit --transport ${TRANSPORT} --host ${HOST} --port ${PORT}"]
