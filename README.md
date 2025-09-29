@@ -32,6 +32,71 @@ npx -y @smithery/cli install @adhikasp/mcp-reddit --client claude
 }
 ```
 
+### Docker Installation
+
+The easiest way to run the MCP Reddit server is using Docker and Docker Compose.
+
+1. Clone the repository:
+```bash
+git clone https://github.com/adhikasp/mcp-reddit.git
+cd mcp-reddit
+```
+
+2. Create a `.env` file from the example:
+```bash
+cp .env.example .env
+```
+
+3. Edit `.env` and add your Reddit API credentials:
+```bash
+REDDIT_CLIENT_ID=your_client_id_here
+REDDIT_CLIENT_SECRET=your_client_secret_here
+REDDIT_REFRESH_TOKEN=your_refresh_token_here
+```
+
+4. Start the server using Docker Compose:
+```bash
+docker-compose up -d
+```
+
+The server will be available at `http://localhost:8000` by default.
+
+#### Docker Configuration
+
+The Docker setup supports multiple transport modes via environment variables:
+
+- **SSE Mode** (default): `TRANSPORT=sse` - Server-Sent Events over HTTP
+- **Streamable HTTP Mode**: `TRANSPORT=streamable-http`
+- **Standard HTTP Mode**: `TRANSPORT=http`
+- **Stdio Mode**: `TRANSPORT=stdio` - For direct pipe communication
+
+You can override the port by setting `PORT` in your `.env` file.
+
+#### Building and Running Manually
+
+If you prefer to build and run the Docker container manually:
+
+```bash
+# Build the image
+docker build -t reddit-mcp .
+
+# Run with SSE transport (HTTP mode)
+docker run -p 8000:8000 \
+  -e TRANSPORT=sse \
+  -e REDDIT_CLIENT_ID=your_id \
+  -e REDDIT_CLIENT_SECRET=your_secret \
+  -e REDDIT_REFRESH_TOKEN=your_token \
+  reddit-mcp
+
+# Or run with stdio transport (for piping)
+docker run -i \
+  -e TRANSPORT=stdio \
+  -e REDDIT_CLIENT_ID=your_id \
+  -e REDDIT_CLIENT_SECRET=your_secret \
+  -e REDDIT_REFRESH_TOKEN=your_token \
+  reddit-mcp
+```
+
 ## Usage
 
 Using [mcp-client-cli](https://github.com/adhikasp/mcp-client-cli):
