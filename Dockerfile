@@ -30,10 +30,19 @@ FROM python:3.13-slim-bookworm
 WORKDIR /app
  
 COPY --from=uv /root/.local /root/.local
-COPY --from=uv --chown=app:app /app/.venv /app/.venv
+COPY --from=uv /app/.venv /app/.venv
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
+# Environment variables for HTTP mode (can be overridden)
+ENV TRANSPORT=sse
+ENV HOST=0.0.0.0
+ENV PORT=8000
+
+# Expose the port for HTTP/SSE mode
+EXPOSE 8000
+
 # Set the entry point for the container
-ENTRYPOINT ["mcp-reddit"]
+# Use shell form to allow environment variable expansion
+CMD mcp-reddit --transport ${TRANSPORT} --host ${HOST} --port ${PORT}

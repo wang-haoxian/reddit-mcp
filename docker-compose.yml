@@ -1,0 +1,23 @@
+services:
+  reddit-mcp:
+    build: .
+    container_name: reddit-mcp-server
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      # Transport mode: stdio, sse, streamable-http, or http
+      - TRANSPORT=${TRANSPORT:-sse}
+      # Server configuration
+      - HOST=0.0.0.0
+      - PORT=8000
+      # Reddit API credentials (required)
+      - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
+      - REDDIT_CLIENT_SECRET=${REDDIT_CLIENT_SECRET}
+      - REDDIT_REFRESH_TOKEN=${REDDIT_REFRESH_TOKEN}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_STREAM); s.connect(('localhost', 8000)); s.close()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

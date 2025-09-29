@@ -14,7 +14,7 @@ dependencies = [
 
 
 [project.scripts]
-mcp-reddit = "mcp_reddit.reddit_fetcher:mcp.run"
+mcp-reddit = "mcp_reddit.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
