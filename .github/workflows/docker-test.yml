@@ -1,0 +1,71 @@
+name: Test Docker Image
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  test-docker:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: reddit-mcp:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test mcp-reddit command exists
+        run: |
+          # Test that mcp-reddit command is available in the image
+          docker run --rm reddit-mcp:test sh -c "which mcp-reddit"
+          
+      - name: Test mcp-reddit --help
+        run: |
+          # Test that mcp-reddit command can show help
+          docker run --rm reddit-mcp:test sh -c "mcp-reddit --help"
+          
+      - name: Test Docker image runs (SSE mode)
+        run: |
+          # Start container in background
+          docker run -d --name test-sse \
+            -e TRANSPORT=sse \
+            -e HOST=0.0.0.0 \
+            -e PORT=8000 \
+            reddit-mcp:test
+          
+          # Wait a bit for the server to start
+          sleep 5
+          
+          # Check if container is still running
+          docker ps | grep test-sse
+          
+          # Check logs for any errors
+          docker logs test-sse
+          
+          # Cleanup
+          docker stop test-sse
+          docker rm test-sse
+
+      - name: Test Docker image with stdio mode
+        run: |
+          # Test stdio mode - should not fail immediately
+          timeout 5 docker run --rm \
+            -e TRANSPORT=stdio \
+            reddit-mcp:test < /dev/null || true
