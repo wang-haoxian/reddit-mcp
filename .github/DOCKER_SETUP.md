@@ -53,14 +53,16 @@ The workflow builds images for multiple platforms:
 Once published, you can pull the image using:
 
 ```bash
-docker pull docker.io/wang-haoxian/reddit-mcp:latest
+docker pull docker.io/<your-dockerhub-username>/reddit-mcp:latest
 ```
+
+Replace `<your-dockerhub-username>` with the DockerHub username you configured in the `DOCKERHUB_USERNAME` secret.
 
 Or use it in your docker-compose.yml:
 
 ```yaml
 services:
   reddit-mcp:
-    image: wang-haoxian/reddit-mcp:latest
+    image: <your-dockerhub-username>/reddit-mcp:latest
     # ... rest of your configuration
 ```
