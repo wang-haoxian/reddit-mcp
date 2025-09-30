@@ -44,4 +44,4 @@ EXPOSE 8000
 
 # Set the entry point for the container
 # Use shell form to allow environment variable expansion
-CMD ["sh", "-c", "mcp-reddit --transport ${TRANSPORT} --host ${HOST} --port ${PORT}"]
+CMD ["sh", "-c", "python -m mcp_reddit --transport ${TRANSPORT} --host ${HOST} --port ${PORT}"]
